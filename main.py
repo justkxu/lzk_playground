@@ -4,10 +4,8 @@ import pandas as pd
 class Serializer:
     def __init__(self, document_path_netto: str, document_path_brutto: str):
         self.data = None
-        self.path_netto = document_path_netto
-        self.path_brutto = document_path_brutto
-        self.data_netto = pd.read_csv(self.path_netto, delimiter=";", thousands=".", decimal=",")
-        self.data_brutto = pd.read_csv(self.path_brutto, delimiter=";", thousands=".", decimal=",")
+        self.data_netto = pd.read_csv(document_path_netto, delimiter=";", thousands=".", decimal=",")
+        self.data_brutto = pd.read_csv(document_path_brutto, delimiter=";", thousands=".", decimal=",")
 
     def run(self):
         self.data = self.calculate_percentage()
