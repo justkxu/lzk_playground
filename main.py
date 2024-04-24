@@ -1,6 +1,12 @@
 import pandas as pd
 
 
+def txt_table(data, filename):
+    df = pd.DataFrame(data)
+    with open(filename, 'w') as file:
+        file.write(df.to_string(index=False))
+
+
 class Serializer:
     def __init__(self, document_path_netto: str, document_path_brutto: str):
         self.data = None
@@ -11,7 +17,9 @@ class Serializer:
         self.data = self.calculate_percentage()
         self.data['Anteil (Mittelwert)'] = self.data.iloc[:, 1:].mean(axis=1).round(2)
         self.data["Anteil Eigenbedarf (Mittelwert)"] = self.calculate_mean_of_energy_usage()
-        self.txt_table(self.data, "result.txt")
+        self.data = self.data.astype("object")
+        self.data.iloc[:, 1:] = self.data.iloc[:, 1:].astype(str) + '%'
+        txt_table(self.data, "result.txt")
 
     def calculate_percentage(self):
         percentage_df = pd.DataFrame(self.data_netto["Art"])
@@ -32,11 +40,6 @@ class Serializer:
                 difference_df[column_name] = self.data_brutto[column_name] - self.data_netto[column_name]
                 mean_df[column_name] = difference_df[column_name] / self.data_brutto[column_name] * 100
         return mean_df.mean(axis=1, numeric_only=True, skipna=True).round(2)
-
-    def txt_table(self, data, filename):
-        df = pd.DataFrame(data)
-        with open(filename, 'w') as file:
-            file.write(df.to_string(index=False))
 
 
 if __name__ == "__main__":
